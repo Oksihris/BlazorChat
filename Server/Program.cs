@@ -1,8 +1,22 @@
+using BlazorChat.Server;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = TokenService.GetTokenValidationParameters(builder.Configuration);
+
+});
+
+builder.Services.AddTransient<TokenService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
