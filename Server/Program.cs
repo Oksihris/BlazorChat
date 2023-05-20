@@ -1,6 +1,7 @@
 using BlazorChat.Server;
+using BlazorChat.Server.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = TokenService.GetTokenValidationParameters(builder.Configuration);
 
 });
+
+builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Chat")));
 
 builder.Services.AddTransient<TokenService>();
 

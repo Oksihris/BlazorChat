@@ -22,7 +22,7 @@ namespace BlazorChat.Server.Controllers
         public async Task<IActionResult> Register(RegisterDto dto, CancellationToken cancellationToken)
         {
             var usernameExist = await _chatContext.Users.AsNoTracking().AnyAsync(u => u.UserName == dto.UserName, cancellationToken);
-            if (!usernameExist) 
+            if (usernameExist) 
             {
                 return BadRequest($"{nameof(dto.UserName)} already exist");
 
