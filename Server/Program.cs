@@ -1,5 +1,6 @@
 using BlazorChat.Server;
 using BlazorChat.Server.Data;
+using BlazorChat.Server.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(build
 
 builder.Services.AddTransient<TokenService>();
 
+builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -48,6 +50,7 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/blazor-chat");
 app.MapFallbackToFile("index.html");
 
 app.Run();
