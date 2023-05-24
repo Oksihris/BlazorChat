@@ -1,4 +1,92 @@
 ﻿@page "/"
+@using System.Text.Json;
+@using System.Net;
+@inject HttpClient HttpClient
 
 <PageTitle>Chat App</PageTitle>
 
+
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col">
+            <h2>Blazor Chat - Login</h2>
+            <hr/>
+            <EditForm Model="LoginModel" OnInvalidSubmit="LoginAsync">
+                <DataAnnotationsValidator/>
+                @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <p class="text-danger">@errorMessage</p>
+                }
+                <div class="mb-3">
+                    <label class="control-label">Username</label>
+                    <InputText @bind-Value="LoginModel.UserName" DisplayName="Username" class="form-control" placeholder="Enter username"/>
+                    <ValidationMessage For="()=>LoginModel.UserName"/>
+                </div>
+                <div class="mb-3">
+                    <label class="control-label">Password</label>
+                    <InputText type="password" @bind-Value="LoginModel.Password" DisplayName="Password" class="form-control" placeholder="Enter password" />
+                    <ValidationMessage For="()=>LoginModel.Password" />
+                </div>
+               
+               <div class="mb-3">
+                    <button type="submit" class="btn btn-success float-start" @(_isBusy? "disabled" : "" )>Login</button>
+                
+                    <NavLink href="register" class="btn btn-outline-primary float-end" >Register</NavLink>
+               </div>
+              
+            </EditForm>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
+
+@code{
+    private LoginDto LoginModel { get; set; } = new();
+
+    private bool _isBusy = false;
+    private string? errorMessage = null;
+
+    private async Task LoginAsync()
+    {
+        try
+        {
+            _isBusy = true;
+            errorMessage = null;
+            var response = await HttpClient.PostAsJsonAsync<LoginDto>("api/account/login", LoginModel);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var authResult = JsonSerializer.Deserialize<AuthResponseDto>(content,new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            }
+            else
+            {
+                string? errorContent = null;
+                try
+                {
+                    errorContent = await response.Content.ReadAsStringAsync();
+                }
+                catch 
+                {
+                }
+                if (string.IsNullOrWhiteSpace(errorContent))
+                {
+                    errorContent = $"Error{response.StatusCode} - ${response.ReasonPhrase}";
+                }
+
+                _isBusy = false;
+                errorMessage = errorContent;
+            }
+        }
+        catch(Exception ex)
+        {
+        errorMessage = ex.Message;
+             _isBusy = false; 
+        }
+    
+    }
+}
