@@ -1,6 +1,4 @@
 ﻿@page "/"
-@using System.Text.Json;
-@using System.Net;
 @inject HttpClient HttpClient
 
 <PageTitle>Chat App</PageTitle>
@@ -33,7 +31,8 @@
                     <button type="submit" class="btn btn-success float-start" @(_isBusy? "disabled" : "" )>Login</button>
                 
                     <NavLink href="register" class="btn btn-outline-primary float-end" >Register</NavLink>
-               </div>
+              <div class ="clearfix"></div>
+                </div>
               
             </EditForm>
         </div>
