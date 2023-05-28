@@ -1,51 +1,69 @@
 ﻿@page "/register"
 
 @inject HttpClient HttpClient
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
 
 <PageTitle>Register - Chat App</PageTitle>
 
 
 <div class="container">
     <div class="row">
-        <div class="col"></div>
-        <div class="col">
-            <h2>Blazor Chat - Register</h2>
-            <hr/>
-            <EditForm Model="RegisterModel" OnInvalidSubmit="RegisterAsync">
-                <DataAnnotationsValidator/>
-                @if (!string.IsNullOrWhiteSpace(errorMessage))
-                {
-                        <p class="text-danger">@errorMessage</p>
-                }
-                 <div class="mb-3">
-                    <label class="control-label">Name</label>
-                    <InputText @bind-Value="RegisterModel.Name" DisplayName="Name" class="form-control" placeholder="Enter your name"/>
-                    <ValidationMessage For="()=>RegisterModel.Name"/>
-                </div>
-                <div class="mb-3">
-                    <label class="control-label">Username</label>
-                    <InputText @bind-Value="RegisterModel.UserName" DisplayName="Username" class="form-control" placeholder="Enter username"/>
-                    <ValidationMessage For="()=>RegisterModel.UserName"/>
-                </div>
-                <div class="mb-3">
-                    <label class="control-label">Password</label>
-                    <InputText type="password" @bind-Value="RegisterModel.Password" DisplayName="Password" class="form-control" placeholder="Enter password" />
-                    <ValidationMessage For="()=>RegisterModel.Password" />
-                </div>
+        <div class="col-lg-4 col-md-3 col-sm-2"></div>
+        <div class="col-lg-4 col-md-6 col-sm-8">
+            <EditForm Model="RegisterModel" OnValidSubmit="RegisterAsync">
+                <div class="card br-0 mt-5">
+                    <div class="card-header bg-main br-0">
+                        <h2 class="mb-0">Blazor Chat - Login</h2>
+                    </div>
+                    <div class="card-body">
+                        <DataAnnotationsValidator />
+                        @if (!string.IsNullOrWhiteSpace(errorMessage))
+                        {
+                            <p class="text-danger">@errorMessage</p>
+                        }
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText @bind-Value="RegisterModel.Name" DisplayName="Name" class="form-control" placeholder="Enter name" />
+                            <ValidationMessage For="() => RegisterModel.Name" />
+                        </div>
 
-               <div class="mb-3">
-                    <button type="submit" class="btn btn-success float-start" @(_isBusy? "disabled" : "" )>Register</button>
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <InputText @bind-Value="RegisterModel.UserName" DisplayName="Username" class="form-control" placeholder="Enter username" />
+                            <ValidationMessage For="() => RegisterModel.UserName" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <InputText type="password" @bind-Value="RegisterModel.Password" DisplayName="Password" class="form-control" placeholder="Enter password" />
+                            <ValidationMessage For="() => RegisterModel.Password" />
+                        </div>
 
-                    <NavLink href="/" class="btn btn-outline-primary float-end" >Login</NavLink>
-              <div class ="clearfix"></div>
+                    </div>
+                    <div class="card-footer">
+
+                        <NavLink href="/" Match="NavLinkMatch.All" class="btn btn-outline-primary float-start">Login</NavLink>
+
+                        @if (_isBusy)
+                        {
+                            <button class="btn btn-success float-end" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Loading...
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-success float-end">Register</button>
+                        }
+
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
-
             </EditForm>
         </div>
-        <div class="col"></div>
+        <div class="col-lg-4 col-md-3 col-sm-2"></div>
     </div>
 </div>
-
 
 @code {
     private RegisterDto RegisterModel { get; set; } = new();
@@ -67,6 +85,8 @@
                     {
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     });
+                NavigationManager.NavigateTo("/chat");
+
             }
             else
             {

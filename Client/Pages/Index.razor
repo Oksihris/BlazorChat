@@ -1,43 +1,66 @@
 ﻿@page "/"
+@using System.Text.Json.Serialization;
+@using System.Text.Json;
 @inject HttpClient HttpClient
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
 
 <PageTitle>Chat App</PageTitle>
 
 
 <div class="container">
+
     <div class="row">
-        <div class="col"></div>
-        <div class="col">
-            <h2>Blazor Chat - Login</h2>
-            <hr/>
-            <EditForm Model="LoginModel" OnInvalidSubmit="LoginAsync">
-                <DataAnnotationsValidator/>
+        <div class="col-lg-4 col-md-3 col-sm-2"></div>
+        <div class="col-lg-4 col-md-6 col-sm-8">
+    <EditForm Model="LoginModel" OnInvalidSubmit="LoginAsync">
+    <div class="card br-0 mt-5">
+    <div class="card-header bg-main br-0">
+        <h2 class="mb-0">Blazor Chat - Login</h2>
+    </div>
+    <div class="card-body">
+         
+                <DataAnnotationsValidator />
                 @if (!string.IsNullOrWhiteSpace(errorMessage))
                 {
                     <p class="text-danger">@errorMessage</p>
                 }
                 <div class="mb-3">
-                    <label class="control-label">Username</label>
-                    <InputText @bind-Value="LoginModel.UserName" DisplayName="Username" class="form-control" placeholder="Enter username"/>
-                    <ValidationMessage For="()=>LoginModel.UserName"/>
+                            <label class="form-label">Username</label>
+                    <InputText @bind-Value="LoginModel.UserName" DisplayName="Username" class="form-control" placeholder="Enter username" />
+                    <ValidationMessage For="()=>LoginModel.UserName" />
                 </div>
                 <div class="mb-3">
-                    <label class="control-label">Password</label>
+                            <label class="form-label">Password</label>
                     <InputText type="password" @bind-Value="LoginModel.Password" DisplayName="Password" class="form-control" placeholder="Enter password" />
                     <ValidationMessage For="()=>LoginModel.Password" />
                 </div>
-               
-               <div class="mb-3">
-                    <button type="submit" class="btn btn-success float-start" @(_isBusy? "disabled" : "" )>Login</button>
-                
-                    <NavLink href="register" class="btn btn-outline-primary float-end" >Register</NavLink>
-              <div class ="clearfix"></div>
-                </div>
-              
-            </EditForm>
-        </div>
-        <div class="col"></div>
     </div>
+                    <div class="card-footer">
+                        <NavLink href="register" class="btn btn-outline-primary float-start">Register</NavLink>
+
+                        @if (_isBusy)
+                        {
+                            <button class="btn btn-success float-end" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Loading...
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-success float-end">Login</button>
+                        }
+
+
+                        <div class="clearfix"></div>
+                    </div>
+    </div>
+    </EditForm>
+        </div>
+        <div class="col-lg-4 col-md-3 col-sm-2"></div>
+
+    </div>
+
 </div>
 
 
@@ -57,10 +80,13 @@
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var authResult = JsonSerializer.Deserialize<AuthResponseDto>(content,new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
+                var authResult = JsonSerializer.Deserialize<AuthResponseDto>(content, new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
+                    NavigationManager.NavigateTo("/chat");
+
+
             }
             else
             {
