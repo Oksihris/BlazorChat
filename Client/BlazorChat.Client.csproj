@@ -10,6 +10,13 @@
     <Content Remove="Pages\Counter.razor" />
     <Content Remove="Pages\FetchData.razor" />
     <Content Remove="Pages\PageTitle.razor" />
+    <Content Remove="Shared\NavMenu.razor" />
+    <Content Remove="Shared\SurveyPrompt.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\Chat.razor.css" />
+    <None Remove="Shared\NavMenu.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +34,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\PageTitle.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\Chat.razor.css" />
   </ItemGroup>
 
 </Project>

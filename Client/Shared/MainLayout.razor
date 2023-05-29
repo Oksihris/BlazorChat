@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@inherits LayoutComponentBase
 
 <CascadingValue Value="AuthenticationState" Name="AuthenticationState">
 <div class = "container-fluid">
@@ -7,4 +10,20 @@
 </CascadingValue>
 @code{
     public AuthenticationState AuthenticationState { get; set; } = new();
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        var authStateJson = await JsRuntime.InvokeAsync<string>("getFromStorage", AuthenticationState.AuthStoreKey);
+
+        if (!string.IsNullOrWhiteSpace(authStateJson))
+        {
+            var authState = JsonConverter.Deserialize<AuthResponseDto>(authStateJson);
+            AuthenticationState.LoadState(authState);
+        }
+        if (AuthenticationState.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/chat");
+        }
+    }
 }
