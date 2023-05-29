@@ -1,7 +1,18 @@
 ﻿@page "/chat"
-
-<h3>Chat</h3>
+@inject NavigationManager NavigationManager
+<h3>Welcome @AuthenticationState.Name</h3>
 
 @code {
+    [CascadingParameter(Name = "AuthenticationState")]
+    public AuthenticationState AuthenticationState { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (!AuthenticationState.IsAuthenticated)
+     {
+            NavigationManager.NavigateTo("/");
+        }
+    }
 
 }

@@ -4,8 +4,6 @@
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 
-<PageTitle>Register - Chat App</PageTitle>
-
 
 <div class="container">
     <div class="row">
@@ -66,6 +64,10 @@
 </div>
 
 @code {
+
+    [CascadingParameter(Name = "AuthenticationState")]
+    public AuthenticationState AuthenticationState { get; set; }
+
     private RegisterDto RegisterModel { get; set; } = new();
 
     private bool _isBusy = false;
@@ -85,6 +87,7 @@
                     {
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     });
+                AuthenticationState.LoadState(authResult);
                 NavigationManager.NavigateTo("/chat");
 
             }

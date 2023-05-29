@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Counter.razor" />
+    <Content Remove="Pages\FetchData.razor" />
     <Content Remove="Pages\PageTitle.razor" />
   </ItemGroup>
 
@@ -21,10 +23,6 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\PageTitle.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pages\PageTitle.razor" />
   </ItemGroup>
 
   <ItemGroup>
