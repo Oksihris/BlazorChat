@@ -18,12 +18,10 @@
         <div class="card-body messages-window bg-light d-flex">
             <div class="row" style="flex: 1">
                 <div class="col-sm-3 col-3">
-                    @*Users*@
-                    <span>Users List</span>
+                    <UsersList Users="Users"/>
                 </div>
-                <div class="col-9">
-                    @*Chat Message Window*@
-                    <span>Chat Messages</span>
+                <div class="col-sm-6 col-6 d-flex px-0">
+                    <ChatMessages/>
                 </div>
             </div>
         </div>
@@ -35,6 +33,8 @@
 @code {
     [CascadingParameter(Name = "AuthenticationState")]
     public AuthenticationState AuthenticationState { get; set; }
+
+    public IEnumerable<string> Users { get; set; } = Enumerable.Empty<string>();
 
     protected override void OnInitialized()
     {
