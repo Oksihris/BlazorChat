@@ -1,4 +1,8 @@
 ﻿@page "/chat"
+@using Microsoft.AspNetCore.SignalR.Client
+
+@implements IAsyncDisposable
+
 @inject NavigationManager NavigationManager
 
 <div class="container-fluid">
@@ -34,15 +38,48 @@
     [CascadingParameter(Name = "AuthenticationState")]
     public AuthenticationState AuthenticationState { get; set; }
 
-    public IEnumerable<string> Users { get; set; } = Enumerable.Empty<string>();
+    private HubConnection? _hubConnection;
 
-    protected override void OnInitialized()
+    public ICollection<string> Users { get; set; } = new HashSet<string>();
+
+    protected override async void OnInitialized()
     {
         base.OnInitialized();
         if (!AuthenticationState.IsAuthenticated)
-     {
+        {
             NavigationManager.NavigateTo("/");
         }
+        else
+        {
+            _hubConnection = ConfigureHubConnection();
+
+            await _hubConnection.StartAsync();
+            await _hubConnection.SendAsync(nameof(IChatHubServer.ConnectUser), AuthenticationState.Name);
+        }
+
     }
 
+    private HubConnection ConfigureHubConnection()
+    {
+        var hubConnection = new HubConnectionBuilder()
+           .WithUrl(NavigationManager.ToAbsoluteUri("/hubs/blazor-chat"))
+           .Build();
+
+        hubConnection.On<string>(nameof(IChatHubClient.UserConnected), (userName) =>
+        {
+            Users.Add(userName);
+            StateHasChanged();
+        });
+
+        return hubConnection;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+              await _hubConnection.DisposeAsync();
+        }
+      
+    }
 }

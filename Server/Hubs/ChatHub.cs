@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using BlazorChat.Shared;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BlazorChat.Server.Hubs
 {
-    public interface IChatHubClient
+   
+    public class ChatHub:Hub<IChatHubClient>, IChatHubServer
     {
-        void RecieveMessage(string message);
-
-    }
-    public class ChatHub:Hub<IChatHubClient>
-    {
+        private static ICollection<string> _connectedUsers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         public ChatHub() 
         {
 
@@ -16,6 +14,17 @@ namespace BlazorChat.Server.Hubs
         public override Task OnConnectedAsync()
         {
             return base.OnConnectedAsync();
+        }
+
+        public async Task ConnectUser(string userName)
+        {
+            if (!_connectedUsers.Contains(userName))
+            {
+                _connectedUsers.Add(userName);
+
+                await Clients.Others.UserConnected(userName);
+            }
+            
         }
     }
 }
