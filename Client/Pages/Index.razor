@@ -87,7 +87,7 @@
                 await JsRuntime.InvokeVoidAsync("window.setToStorage", AuthenticationState.AuthStoreKey, serialized);
 
                 AuthenticationState.LoadState(authResult);
-                //NavigationManager.NavigateTo("/chat");
+               NavigationManager.NavigateTo("/chat");
 
             }
             else

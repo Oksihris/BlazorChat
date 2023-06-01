@@ -1,8 +1,12 @@
-﻿namespace BlazorChat.Shared
+﻿using BlazorChat.Shared.DTOs;
+
+namespace BlazorChat.Shared
 {
     public interface IChatHubClient
     {
-        Task UserConnected(string userName);
+        Task UserConnected(UserDto user);
+        Task ConnectedUsersList(IEnumerable<UserDto> users);
+
 
     }
 }

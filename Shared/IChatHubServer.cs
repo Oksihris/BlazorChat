@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlazorChat.Shared.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace BlazorChat.Shared
 {
     public interface IChatHubServer
     {
-        Task ConnectUser(string userName);
+        Task ConnectUser(UserDto user);
 
     }
 }

@@ -1,6 +1,9 @@
 ﻿using BlazorChat.Server.Data;
 using BlazorChat.Server.Data.Entities;
+using BlazorChat.Server.Hubs;
+using BlazorChat.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorChat.Server.Controllers
@@ -11,11 +14,13 @@ namespace BlazorChat.Server.Controllers
     {
         private readonly ChatContext _chatContext;
         private readonly TokenService _tokenService;
+        private readonly IHubContext<ChatHub, IChatHubClient> _hubContext;
 
-        public AccountController(ChatContext chatContext, TokenService tokenService) 
+        public AccountController(ChatContext chatContext, TokenService tokenService, IHubContext<ChatHub, IChatHubClient> hubContext) 
         {
             _chatContext = chatContext;
             _tokenService = tokenService;
+            _hubContext = hubContext;
         }
 
         [HttpPost("register")]
@@ -39,6 +44,8 @@ namespace BlazorChat.Server.Controllers
 
             await _chatContext.SaveChangesAsync(cancellationToken);
 
+           await _hubContext.Clients.All.UserConnected(new UserDto(user.Id, user.Name));
+           
             return Ok(GenerateToken(user));
         }
 
@@ -58,7 +65,7 @@ namespace BlazorChat.Server.Controllers
         private AuthResponseDto GenerateToken(User user)
         {
            var token =  _tokenService.GenerateJWT(user);
-            return new AuthResponseDto(user.Name, token);
+            return new AuthResponseDto(new UserDto(user.Id, user.Name), token);
         }
     }
 }

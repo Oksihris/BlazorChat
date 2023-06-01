@@ -1,6 +1,7 @@
-﻿
-@inject NavigationManager NavigationManager
+﻿﻿@using System.ComponentModel;
+@implements IDisposable
 @inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
 @inherits LayoutComponentBase
 
 <CascadingValue Value="AuthenticationState" Name="AuthenticationState">
@@ -20,10 +21,32 @@
         {
             var authState = JsonConverter.Deserialize<AuthResponseDto>(authStateJson);
             AuthenticationState.LoadState(authState);
-        }
+
         if (AuthenticationState.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/chat");
         }
+        }
+        AuthenticationState.PropertyChanged += AuthenticationStateChanged;
+       
+    }
+
+    private void AuthenticationStateChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AuthenticationState.IsAuthenticated))
+        {
+            if (AuthenticationState.IsAuthenticated)
+            {
+                NavigationManager.NavigateTo("/chat");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
+        }
+    }
+    public void Dispose()
+    {
+        AuthenticationState.PropertyChanged -= AuthenticationStateChanged;
     }
 }

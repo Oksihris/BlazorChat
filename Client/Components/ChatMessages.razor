@@ -1,5 +1,18 @@
-﻿<h3>ChatMessages</h3>
+﻿﻿@using System.Net.Http.Headers;
+@inject HttpClient Client
+@inject IJSRuntime JsRuntime
+
+@if (SelectedUser is null)
+{
+    <h2>Please select user to start a converstation</h2>
+}
+else
+{
+    <h2>@SelectedUser.Value.Name</h2>
+}
+
 
 @code {
-
+    [Parameter]
+    public UserDto? SelectedUser { get; set; }
 }
