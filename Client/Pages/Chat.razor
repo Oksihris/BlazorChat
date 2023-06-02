@@ -81,7 +81,8 @@
     private HubConnection ConfigureHubConnection()
     {
         var hubConnection = new HubConnectionBuilder()
-           .WithUrl(NavigationManager.ToAbsoluteUri("/hubs/blazor-chat"))
+           .WithUrl(NavigationManager.ToAbsoluteUri("/hubs/blazor-chat"),  
+           options => options.AccessTokenProvider = () => Task.FromResult(AuthenticationState.Token))
            .Build();
 
         hubConnection.On<UserDto>(nameof(IChatHubClient.UserConnected), (userName) =>

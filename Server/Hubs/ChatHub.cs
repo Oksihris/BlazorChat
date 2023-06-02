@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorChat.Server.Hubs
 {
-   
+    [Authorize]
     public class ChatHub:Hub<IChatHubClient>, IChatHubServer
     {
         

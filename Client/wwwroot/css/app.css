@@ -1,6 +1,12 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
-html, body {
+
+:root {
+    --main-color: #198754;
+}
+
+
+html, body, * {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -11,6 +17,8 @@ h1:focus {
 a, .btn-link {
     color: #0071c1;
 }
+
+
 
 .btn-primary {
     color: #fff;
@@ -62,3 +70,23 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+body {
+    background-color: #faf4e6;
+}
+
+.br-0 {
+    border-radius: 0 !important;
+}
+
+.bg-main {
+    background-color: var(--main-color);
+}
+
+.btn {
+    border-radius: 0 !important;
+}
+
+.card {
+    box-shadow: 0px -1px 20px 0px #9de3bd;
+}
