@@ -26,10 +26,13 @@
         <div class="card-body messages-window bg-light d-flex">
             <div class="row" style="flex: 1">
                 <div class="col-sm-3 col-3">
-                    <UsersList Users="Users" OnUserSelected="OnUserSelected" />
+                    <ChatsList Users="Users" OnUserSelected="OnUserSelected" />
                 </div>
                 <div class="col-sm-6 col-6 d-flex px-0">
-                    <ChatMessages SelectedUser="_selectedUser" />
+                    <ChatDetails SelectedUser="_selectedUser" />
+                </div>
+                <div class="col-sm-3 col-3">
+                    <UsersList  OnUserSelected="OnUserSelected" />
                 </div>
             </div>
         </div>
@@ -47,6 +50,7 @@
     public ICollection<UserDto> Users { get; set; } = new HashSet<UserDto>();
     
     private UserDto? _selectedUser = null;
+
 
 
     protected override async void OnInitialized()

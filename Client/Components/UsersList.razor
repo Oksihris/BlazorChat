@@ -1,26 +1,69 @@
-﻿
+﻿﻿@using System.Net.Http.Headers
+@inject HttpClient Client
+@inject IJSRuntime JsRuntime
 
+<h3>Users</h3>
 
 <ul class="list-group list-group-flush">
-    @foreach (var user in Users)
+    @if (_loading)
+    {
+        <li class="list-group-item">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+        </li>
+    }
+    else
+    {
+    foreach (var user in Users)
     {
         
         <li class="list-group-item" @onclick="() => HandleUserClick(user)">
             @user.Name
         </li>
     }
-       
+    }
 
 
 </ul>
 
 @code {
-    [Parameter]
-    public ICollection<UserDto> Users { get; set; } = default!;
+    // [Parameter]
+    // public ICollection<UserDto> Users { get; set; } = default!;
+
+
+    [CascadingParameter(Name = "AuthenticationState")]
+    public AuthenticationState AuthenticationState { get; set; }
+
 
     [Parameter]
     public EventCallback<UserDto> OnUserSelected { get; set; }
 
+
+    private bool _loading = false;
+
+    public IEnumerable<UserDto> Users { get; set; } = Enumerable.Empty<UserDto>();
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            _loading = true;
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthenticationState.Token);
+            var usersList = await Client.GetFromJsonAsync<IEnumerable<UserDto>>("api/users", JsonConverter.JsonSerializerOptions);
+            if (usersList is not null)
+            {
+                Users = usersList;
+            }
+        }
+        //catch (Exception)
+       // {
+         //   throw;
+       // }
+        finally
+        {
+            _loading = false;
+        }
+    }
+   
 
     private async Task HandleUserClick(UserDto user)
     {
