@@ -5,7 +5,7 @@
 <h3>Users</h3>
 
 <ul class="list-group list-group-flush">
-    @if (_loading)
+    @if (Loading)
     {
         <li class="list-group-item">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -19,6 +19,7 @@
         
         <li class="list-group-item" @onclick="() => HandleUserClick(user)">
             @user.Name
+                <span class="badge rounded-pill bg-@(user.IsOnline ? "success" : "danger")">.</span>
         </li>
     }
     }
@@ -27,43 +28,15 @@
 </ul>
 
 @code {
-    // [Parameter]
-    // public ICollection<UserDto> Users { get; set; } = default!;
-
-
-    [CascadingParameter(Name = "AuthenticationState")]
-    public AuthenticationState AuthenticationState { get; set; }
-
-
+    
     [Parameter]
     public EventCallback<UserDto> OnUserSelected { get; set; }
+    
+    [Parameter]
+    public ICollection<UserDto> Users { get; set; } = default!;
 
-
-    private bool _loading = false;
-
-    public IEnumerable<UserDto> Users { get; set; } = Enumerable.Empty<UserDto>();
-    protected async override Task OnInitializedAsync()
-    {
-        try
-        {
-            _loading = true;
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthenticationState.Token);
-            var usersList = await Client.GetFromJsonAsync<IEnumerable<UserDto>>("api/users", JsonConverter.JsonSerializerOptions);
-            if (usersList is not null)
-            {
-                Users = usersList;
-            }
-        }
-        //catch (Exception)
-       // {
-         //   throw;
-       // }
-        finally
-        {
-            _loading = false;
-        }
-    }
-   
+    [Parameter]
+    public bool Loading { get; set; }
 
     private async Task HandleUserClick(UserDto user)
     {

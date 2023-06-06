@@ -9,7 +9,7 @@ namespace BlazorChat.Shared
 {
     public interface IChatHubServer
     {
-        Task ConnectUser(UserDto user);
+        Task SetUserOnline(UserDto user);
 
     }
 }

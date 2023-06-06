@@ -2,28 +2,41 @@
 <h3>Chats</h3>
 
 <ul class="list-group list-group-flush">
-    @foreach (var user in Users)
+    @if (Loading)
     {
-        
-        <li class="list-group-item" @onclick="() => HandleUserClick(user)">
-            @user.Name
+        <li class="list-group-item">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+        </li>
+    }
+     else
+    {
+    @foreach (var chat in Chats)
+    {
+
+            <li class="list-group-item" @onclick="() => HandleUserClick(chat)">
+                @chat.Name
         </li>
     }
        
-
+    }
 
 </ul>
 
 @code {
     [Parameter]
-    public ICollection<UserDto> Users { get; set; } = default!;
+    public IEnumerable<UserDto> Chats { get; set; } = Enumerable.Empty<UserDto>();
+
+
+    [Parameter]
+    public bool Loading { get; set; }
 
     [Parameter]
     public EventCallback<UserDto> OnUserSelected { get; set; }
 
 
-    private async Task HandleUserClick(UserDto user)
+    private async Task HandleUserClick(UserDto chat)
     {
-        await OnUserSelected.InvokeAsync(user);
+        await OnUserSelected.InvokeAsync(chat);
     }
 }

@@ -22,7 +22,7 @@ namespace BlazorChat.Server.Controllers
         [HttpGet]
         public async Task<IEnumerable<UserDto>> GetUsers() =>
             await _chatContext.Users.AsNoTracking().Where(u => u.Id != UserId)
-            .Select(u => new UserDto(u.Id, u.Name))
+            .Select(u => new UserDto(u.Id, u.Name, false))
             .ToListAsync();
     }
 }

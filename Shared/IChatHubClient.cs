@@ -5,8 +5,9 @@ namespace BlazorChat.Shared
     public interface IChatHubClient
     {
         Task UserConnected(UserDto user);
-        Task ConnectedUsersList(IEnumerable<UserDto> users);
-
+       
+        Task OnlineUsersList(IEnumerable<UserDto> users);
+        Task UserIsOnline(int userId);
 
     }
 }
