@@ -8,11 +8,52 @@
 }
 else
 {
-    <h2>@SelectedUser.Name</h2>
+     <div class="flex-grow-1 d-flex flex-column">
+    <div class="header d-flex justify-content-between bg-main">
+        <h4 class="text-white m-0 p-1">@SelectedUser.Name</h4>
+            <button class="btn btn-danger btn-sm" @onclick="HandleCancelClick">x</button>
+        </div> 
+     
+        <div class="messages-list"></div>
+        <div class="message-input"></div>
+       
+</div>
 }
 
 
 @code {
+    [CascadingParameter(Name = "AuthenticationState")]
+    public AuthenticationState AuthenticationState { get; set; }
+
+    private int CurrentUserId => AuthenticationState?.User.Id ?? 0;
+
     [Parameter]
     public UserDto? SelectedUser { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnCancel { get; set; }
+
+    [Parameter]
+    public EventCallback OnIncomingMessageRecieved { get; set; }
+
+    [Parameter]
+    public MessageDto? NewIncomingMessage { get; set; }
+
+    private IList<MessageDto> _messages = new List<MessageDto>();
+
+    private string _newMessage = "";
+    private string? _errorMessage;
+    private string? _infoMessage;
+    private int previousSelectedUserId = 0;
+    private bool _scrollToBottom = false;
+    private bool _loadingMessages = false;
+
+
+   private async Task HandleCancelClick()
+    {
+       var isUserHasMessages = _messages.Any();
+        var shouldRemoveFromChatsList = !isUserHasMessages;
+        await OnCancel.InvokeAsync(shouldRemoveFromChatsList);
+    }
+
 }

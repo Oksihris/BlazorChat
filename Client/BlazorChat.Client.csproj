@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Components\ChatDetails.razor.css" />
     <None Remove="Pages\Chat.razor.css" />
     <None Remove="Shared\NavMenu.razor.css" />
   </ItemGroup>
@@ -51,6 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Components\ChatDetails.razor.css" />
     <Content Include="Pages\Chat.razor.css" />
   </ItemGroup>
 
