@@ -29,7 +29,10 @@
                     <ChatsList Loading="_loadingUsers" Chats="Chats" OnUserSelected="OnUserSelected" />
                 </div>
                 <div class="col-sm-6 col-6" style="background-color: #f8ffe8;">
-                    <ChatDetails SelectedUser="_selectedUser" OnCancel="HandleChatDetailsCancel" />
+                    <ChatDetails SelectedUser="_selectedUser"
+                                 NewIncomingMessage="@_newIncomingMessage"
+                                 OnIncomingMessageRecieved="()=> _newIncomingMessage = null"
+                                 OnCancel="HandleChatDetailsCancel" />
                 </div>
                 <div class="col-sm-3 col-3">
                     <UsersList Loading="_loadingUsers" Users="Users" OnUserSelected="OnUserSelected" />
@@ -55,7 +58,7 @@
 
 
     private UserDto? _selectedUser = null;
-    //private MessageDto? _newIncomingMessage = null;
+    private MessageDto? _newIncomingMessage = null;
 
 
     protected override async void OnInitialized()
@@ -71,7 +74,7 @@
 
             _loadingUsers = true;
             var userListTask = GetClient().GetFromJsonAsync<ICollection<UserDto>>("api/users", JsonConverter.JsonSerializerOptions);
-            // var chatListTask = GetClient().GetFromJsonAsync<IList<UserDto>>("api/users/chats", JsonConverter.JsonSerializerOptions);
+            var chatListTask = GetClient().GetFromJsonAsync<IList<UserDto>>("api/users/chats", JsonConverter.JsonSerializerOptions);
 
             await _hubConnection.StartAsync();
 
@@ -79,6 +82,12 @@
             if (usersList is not null)
             {
                 Users = usersList;
+            }
+
+            var chatsList = await chatListTask;
+            if (chatsList is not null)
+            {
+                Chats = chatsList;
             }
             _loadingUsers = false;
             await _hubConnection.SendAsync(nameof(IChatHubServer.SetUserOnline), AuthenticationState.User);
@@ -166,6 +175,23 @@
              StateHasChanged();
          }
      });
+        hubConnection.On<MessageDto>(nameof(IChatHubClient.MessageRecieved), (messageDto) =>
+        {
+            var fromUser = Users.FirstOrDefault(u => u.Id == messageDto.FromUserId);
+
+            if (!Chats.Any(c => c.Id == messageDto.FromUserId))
+            {
+                Chats.Insert(0, fromUser!);
+            }
+            else
+            {
+                if (_selectedUser?.Id == messageDto.FromUserId)
+                {
+                    _newIncomingMessage = messageDto;
+                }
+            }
+            StateHasChanged();
+        });
 
         return hubConnection;
     }

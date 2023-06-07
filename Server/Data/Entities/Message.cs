@@ -16,8 +16,11 @@ namespace BlazorChat.Server.Data.Entities
         public string Content { get; set; }
         public DateTime SentOn { get; set; }
 
-        public virtual User FromUser { get; set; }
-        public virtual User ToUser { get; set; }
 
+        [ForeignKey(nameof(Message.FromId))]
+        public virtual User FromUser { get; set; }
+
+        [ForeignKey(nameof(Message.ToId))]
+        public virtual User ToUser { get; set; }
     }
 }

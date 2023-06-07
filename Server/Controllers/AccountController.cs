@@ -68,5 +68,5 @@ namespace BlazorChat.Server.Controllers
             return new AuthResponseDto(new UserDto(user.Id, user.Name), token);
         }
     }
-}
+    }
        

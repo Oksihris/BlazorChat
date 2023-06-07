@@ -8,6 +8,7 @@ namespace BlazorChat.Shared
        
         Task OnlineUsersList(IEnumerable<UserDto> users);
         Task UserIsOnline(int userId);
+        Task MessageRecieved(MessageDto messageDto);
 
     }
 }
